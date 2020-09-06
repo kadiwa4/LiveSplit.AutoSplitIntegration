@@ -4,6 +4,30 @@ namespace LiveSplit.UI.Components
 {
     partial class AutoSplitIntegrationComponentSettings
     {
+        /// <summary> 
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Component Designer generated code
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
         private void InitializeComponent()
         {
             this.labelAutoSplitPath = new System.Windows.Forms.Label();
@@ -41,7 +65,7 @@ namespace LiveSplit.UI.Components
             this.buttonAutoSplitPathBrowse.TabIndex = 1;
             this.buttonAutoSplitPathBrowse.Text = "Browse...";
             this.buttonAutoSplitPathBrowse.UseVisualStyleBackColor = true;
-            this.buttonAutoSplitPathBrowse.Click += new System.EventHandler(this.buttonAutoSplitPathBrowse_Click);
+            this.buttonAutoSplitPathBrowse.Click += new System.EventHandler(this.ButtonAutoSplitPathBrowse_Click);
             // 
             // textBoxAutoSplitPath
             // 
@@ -50,7 +74,7 @@ namespace LiveSplit.UI.Components
             this.textBoxAutoSplitPath.Name = "textBoxAutoSplitPath";
             this.textBoxAutoSplitPath.Size = new System.Drawing.Size(294, 20);
             this.textBoxAutoSplitPath.TabIndex = 0;
-            this.textBoxAutoSplitPath.TextChanged += new System.EventHandler(this.textBoxAutoSplitPath_TextChanged);
+            this.textBoxAutoSplitPath.TextChanged += new System.EventHandler(this.TextBoxAutoSplitPath_TextChanged);
             // 
             // tableLayoutPanel1
             // 
@@ -61,10 +85,10 @@ namespace LiveSplit.UI.Components
             this.tableLayoutPanel1.Controls.Add(this.textBoxAutoSplitPath, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.labelAutoSplitPath, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.buttonAutoSplitPathBrowse, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.labelAutoSplit, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelPausing, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxGameTimePausing, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonAutoSplitPathBrowse, 2, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(7, 7);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -99,7 +123,7 @@ namespace LiveSplit.UI.Components
             this.buttonStartAutoSplit.TabIndex = 2;
             this.buttonStartAutoSplit.Text = "Start AutoSplit";
             this.buttonStartAutoSplit.UseVisualStyleBackColor = true;
-            this.buttonStartAutoSplit.Click += new System.EventHandler(this.buttonStartAutoSplit_Click);
+            this.buttonStartAutoSplit.Click += new System.EventHandler(this.ButtonStartAutoSplit_Click);
             // 
             // buttonKillAutoSplit
             // 
@@ -110,7 +134,7 @@ namespace LiveSplit.UI.Components
             this.buttonKillAutoSplit.TabIndex = 3;
             this.buttonKillAutoSplit.Text = "Kill AutoSplit";
             this.buttonKillAutoSplit.UseVisualStyleBackColor = true;
-            this.buttonKillAutoSplit.Click += new System.EventHandler(this.buttonKillAutoSplit_Click);
+            this.buttonKillAutoSplit.Click += new System.EventHandler(this.ButtonKillAutoSplit_Click);
             // 
             // labelAutoSplitVersion
             // 
@@ -154,7 +178,7 @@ namespace LiveSplit.UI.Components
             this.checkBoxGameTimePausing.TabIndex = 7;
             this.checkBoxGameTimePausing.Text = "Pause Game Time only (this will disallow manual unpausing)";
             this.checkBoxGameTimePausing.UseVisualStyleBackColor = true;
-            this.checkBoxGameTimePausing.CheckedChanged += new System.EventHandler(this.checkBoxGameTimePausing_CheckedChanged);
+            this.checkBoxGameTimePausing.CheckedChanged += new System.EventHandler(this.CheckBoxGameTimePausing_CheckedChanged);
             // 
             // AutoSplitIntegrationComponentSettings
             // 
@@ -183,4 +207,6 @@ namespace LiveSplit.UI.Components
         private Label labelPausing;
         private CheckBox checkBoxGameTimePausing;
     }
+
+    #endregion
 }

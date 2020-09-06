@@ -7,54 +7,56 @@ namespace LiveSplit.UI.Components
 {
     class AutoSplitProcess
     {
-        private AutoSplitIntegrationComponent _component;
-        private AutoSplitIntegrationComponentSettings _settings;
-        private LiveSplitState _state;
-        private TimerModel _timer;
-        private int _initLine = 0;
+        private const string notAvailable = "N/A";
+
+        private readonly AutoSplitIntegrationComponent component;
+        private readonly AutoSplitIntegrationComponentSettings settings;
+        private readonly LiveSplitState state;
+        private readonly TimerModel timer;
+
+        private int initLine = 0;
 
         internal Process StartupProcess { get; }
-        internal Process MainProcess { get; set; }
+        internal Process MainProcess { get; private set; }
 
-        private bool _isRunning = false;
+        private bool isRunning = false;
         internal bool IsRunning
         {
-            get => _isRunning;
+            get => isRunning;
             set
             {
-                _component.ContextMenuControls.Clear();
+                component.ContextMenuControls.Clear();
 
-                if (value || string.IsNullOrEmpty(_component.AutoSplitPath) || !File.Exists(_component.AutoSplitPath))
-                    _settings.ButtonStartAutoSplit_Enabled = false;
-
+                if (value || string.IsNullOrEmpty(component.AutoSplitPath) || !File.Exists(component.AutoSplitPath))
+                    settings.ButtonStartAutoSplit_Enabled = false;
                 else
                 {
-                    _settings.ButtonStartAutoSplit_Enabled = true;
-                    _component.ContextMenuControls.Add("Start AutoSplit", _component.StartAutoSplit);
+                    settings.ButtonStartAutoSplit_Enabled = true;
+                    component.ContextMenuControls.Add("Start AutoSplit", component.StartAutoSplit);
                 }
 
-                _settings.ButtonKillAutoSplit_Enabled = _isRunning = value;
+                settings.ButtonKillAutoSplit_Enabled = isRunning = value;
 
                 if (value)
-                    _component.ContextMenuControls.Add("Kill AutoSplit", _component.KillAutoSplit);
+                    component.ContextMenuControls.Add("Kill AutoSplit", component.KillAutoSplit);
             }
         }
 
-        private string _version = "N/A";
+        private string version = notAvailable;
         internal string Version
         {
-            get => _version;
-            set => _version = _settings.LabelAutoSplitVersion_Text = value;
+            get => version;
+            set => version = settings.LabelAutoSplitVersion_Text = value;
         }
 
         internal bool GameTimePausing { get; set; } = false;
 
         public AutoSplitProcess(AutoSplitIntegrationComponent component)
         {
-            _component = component;
-            _settings = _component.Settings;
-            _state = _component.State;
-            _timer = _component.Timer;
+            this.component = component;
+            settings = component.Settings;
+            state = component.State;
+            timer = component.Timer;
 
             try
             {
@@ -62,7 +64,7 @@ namespace LiveSplit.UI.Components
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        FileName = _component.AutoSplitPath,
+                        FileName = component.AutoSplitPath,
                         Arguments = "--auto-controlled",
                         UseShellExecute = false,
                         RedirectStandardInput = true,
@@ -79,10 +81,10 @@ namespace LiveSplit.UI.Components
                 StartupProcess.BeginErrorReadLine();
                 IsRunning = true;
             }
-
             catch (Exception e)
             {
-                Console.WriteLine("Error while trying to start AutoSplit: " + e.Message);
+                Console.Write("Error while starting AutoSplit: ");
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -91,18 +93,21 @@ namespace LiveSplit.UI.Components
             if (string.IsNullOrEmpty(e.Data))
                 return;
 
-            switch (_initLine)
+            if (initLine <= 1)
             {
-                case 0:
-                    Version = e.Data;
-                    _initLine++;
-                    return;
-                case 1:
-                    MainProcess = Process.GetProcessById(int.Parse(e.Data));
-                    MainProcess.EnableRaisingEvents = true;
-                    MainProcess.Exited += MainProcess_Exited;
-                    _initLine++;
-                    return;
+                switch (initLine)
+                {
+                    case 0:
+                        Version = e.Data;
+                        break;
+                    case 1:
+                        MainProcess = Process.GetProcessById(int.Parse(e.Data));
+                        MainProcess.EnableRaisingEvents = true;
+                        MainProcess.Exited += MainProcess_Exited;
+                        break;
+                }
+                initLine++;
+                return;
             }
 
             switch (e.Data)
@@ -111,27 +116,27 @@ namespace LiveSplit.UI.Components
                     Send("kill");
                     return;
                 case "start":
-                    _component.IgnoreNext["start"] = true;
-                    _timer.Start();
-                    if (_component.GameTimePausing)
-                        _timer.InitializeGameTime();
+                    component.IgnoreNextStart = true;
+                    timer.Start();
+                    if (component.GameTimePausing)
+                        timer.InitializeGameTime();
 
-                    _settings.OnStart();
+                    settings.OnStart();
                     return;
                 case "split":
-                    _component.IgnoreNext["split"] = true;
-                    _timer.Split();
+                    component.IgnoreNextSplit = true;
+                    timer.Split();
                     return;
                 case "reset":
-                    _component.IgnoreNext["reset"] = true;
-                    _timer.Reset();
-                    _settings.OnReset();
+                    component.IgnoreNextReset = true;
+                    timer.Reset();
+                    settings.OnReset();
                     return;
                 case "pause":
-                    if (_component.GameTimePausing)
-                        _state.IsGameTimePaused ^= true;
+                    if (component.GameTimePausing)
+                        state.IsGameTimePaused ^= true;
                     else
-                        _timer.Pause();
+                        timer.Pause();
                     return;
             }
         }
@@ -139,13 +144,16 @@ namespace LiveSplit.UI.Components
         private void StartupProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.Data))
-                Console.WriteLine("[ERROR] AutoSplit: " + e.Data);
+            {
+                Console.Write("[AutoSplit] Error: ");
+                Console.WriteLine(e.Data);
+            }
         }
 
         private void MainProcess_Exited(object sender, EventArgs e)
         {
             IsRunning = false;
-            Version = "N/A";
+            Version = notAvailable;
         }
 
         internal void Send(string command)
@@ -159,13 +167,14 @@ namespace LiveSplit.UI.Components
 
         internal void Close()
         {
-            if (!_isRunning)
+            if (!IsRunning)
                 return;
 
             Send("kill");
 
             try
             {
+                MainProcess.CloseMainWindow();
                 MainProcess.CloseMainWindow();
             }
 

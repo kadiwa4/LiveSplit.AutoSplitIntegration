@@ -8,28 +8,20 @@ namespace LiveSplit.UI.Components
 {
     public class AutoSplitIntegrationFactory : IComponentFactory
     {
-        public string ComponentName =>
-            "AutoSplit Integration";
+        public string ComponentName => "AutoSplit Integration";
 
-        public string Description =>
-            "Directly connects AutoSplit with LiveSplit.";
+        public string Description => "Directly connects AutoSplit with LiveSplit.";
 
-        public ComponentCategory Category =>
-            ComponentCategory.Control;
+        public ComponentCategory Category => ComponentCategory.Control;
 
-        public Version Version =>
-            Version.Parse("1.8.0");
+        public Version Version => Version.Parse("1.8.1");
 
-        public string UpdateName =>
-            ComponentName;
+        public string UpdateName => ComponentName;
 
-        public string UpdateURL =>
-            "https://raw.githubusercontent.com/KaDiWa4/LiveSplit.AutoSplitIntegration/master/update/";
+        public string UpdateURL => "https://raw.githubusercontent.com/KaDiWa4/LiveSplit.AutoSplitIntegration/master/update/";
 
-        public string XMLURL =>
-            "https://raw.githubusercontent.com/KaDiWa4/LiveSplit.AutoSplitIntegration/master/update/update.LiveSplit.AutoSplitIntegration.xml";
+        public string XMLURL => "https://raw.githubusercontent.com/KaDiWa4/LiveSplit.AutoSplitIntegration/master/update/update.LiveSplit.AutoSplitIntegration.xml";
 
-        public IComponent Create(LiveSplitState state) =>
-            new AutoSplitIntegrationComponent(state);
+        public IComponent Create(LiveSplitState state) => new AutoSplitIntegrationComponent(state);
     }
 }

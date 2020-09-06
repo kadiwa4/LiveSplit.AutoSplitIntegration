@@ -14,39 +14,48 @@ namespace LiveSplit.UI.Components
 
         internal bool GameTimePausing { get; set; } = false;
 
-        internal AutoSplitIntegrationComponentSettings Settings { get; set; }
+        internal AutoSplitIntegrationComponentSettings Settings { get; }
 
-        internal LiveSplitState State { get; set; }
+        internal LiveSplitState State { get; private set; }
 
-        internal TimerModel Timer { get; set; }
+        internal TimerModel Timer { get; private set; }
 
-        internal Dictionary<string, bool> IgnoreNext { get; set; } = new Dictionary<string, bool>()
+        private bool ignoreNextStart = false;
+        internal bool IgnoreNextStart
         {
-            { "start", false },
-            { "split", false },
-            { "reset", false }
-        };
-
-        public string ComponentName =>
-            "AutoSplit Integration";
-
-        public IDictionary<string, Action> ContextMenuControls { get; protected set; } = new Dictionary<string, Action>();
-
-        private string _AutoSplitPath;
-        public string AutoSplitPath
-        {
-            get => _AutoSplitPath;
-
-            set
-            {
-                _AutoSplitPath = value;
-
-                if (AutoSplit != null)
-                    AutoSplit.Close();
-
-                StartAutoSplit();
-            }
+            get => GetAndResetBool(ref ignoreNextStart);
+            set => ignoreNextStart = value;
         }
+
+        private bool ignoreNextSplit = false;
+        internal bool IgnoreNextSplit
+        {
+            get => GetAndResetBool(ref ignoreNextSplit);
+            set => ignoreNextSplit = value;
+        }
+
+        private bool ignoreNextReset = false;
+        internal bool IgnoreNextReset
+        {
+            get => GetAndResetBool(ref ignoreNextReset);
+            set => ignoreNextReset = value;
+        }
+
+        private bool GetAndResetBool(ref bool value)
+        {
+            if (value)
+            {
+                value = false;
+                return true;
+            }
+            return false;
+        }
+
+        public string ComponentName => "AutoSplit Integration";
+
+        public IDictionary<string, Action> ContextMenuControls { get; private set; } = new Dictionary<string, Action>();
+
+        public string AutoSplitPath { get; set; }
 
         public void DrawHorizontal(Graphics g, LiveSplitState state, float height, Region clipRegion) { }
         public void DrawVertical(Graphics g, LiveSplitState state, float height, Region clipRegion) { }
@@ -62,7 +71,10 @@ namespace LiveSplit.UI.Components
         public AutoSplitIntegrationComponent(LiveSplitState state)
         {
             State = state;
-            Timer = new TimerModel() { CurrentState = State };
+            Timer = new TimerModel()
+            {
+                CurrentState = State
+            };
 
             Settings = new AutoSplitIntegrationComponentSettings(this);
 
@@ -73,11 +85,9 @@ namespace LiveSplit.UI.Components
             State.OnUndoSplit += State_OnUndoSplit;
         }
 
-        public Control GetSettingsControl(LayoutMode mode) =>
-            Settings;
+        public Control GetSettingsControl(LayoutMode mode) => Settings;
 
-        public XmlNode GetSettings(XmlDocument document) =>
-            Settings.GetSettings(document);
+        public XmlNode GetSettings(XmlDocument document) => Settings.GetSettings(document);
 
         public void SetSettings(XmlNode settings)
         {
@@ -88,14 +98,13 @@ namespace LiveSplit.UI.Components
 
         public void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode) { }
 
-        public delegate void ContextMenuDelgate();
-
         public void StartAutoSplit()
         {
-            if (string.IsNullOrEmpty(_AutoSplitPath) || !File.Exists(_AutoSplitPath) || (AutoSplit != null && AutoSplit.IsRunning))
-                return;
-
-            AutoSplit = new AutoSplitProcess(this);
+            if (!string.IsNullOrEmpty(AutoSplitPath) && File.Exists(AutoSplitPath))
+            {
+                AutoSplit?.Close();
+                AutoSplit = new AutoSplitProcess(this);
+            }
         }
 
         public void KillAutoSplit()
@@ -107,23 +116,15 @@ namespace LiveSplit.UI.Components
             {
                 AutoSplit.MainProcess.Kill();
             }
-
             catch { }
         }
 
-        public void Dispose()
-        {
-            if (AutoSplit != null)
-                AutoSplit.Close();
-        }
+        public void Dispose() => AutoSplit?.Close();
 
         private void State_OnStart(object sender, EventArgs e)
         {
-            if (IgnoreNext["start"] == true)
-            {
-                IgnoreNext["start"] = false;
+            if (IgnoreNextStart)
                 return;
-            }
 
             AutoSplit.Send("start");
             if (GameTimePausing)
@@ -134,31 +135,23 @@ namespace LiveSplit.UI.Components
 
         private void State_OnSplit(object sender, EventArgs e)
         {
-            if (IgnoreNext["split"] == true)
-            {
-                IgnoreNext["split"] = false;
+            if (IgnoreNextSplit)
                 return;
-            }
 
             AutoSplit.Send("split");
         }
 
         private void State_OnReset(object sender, TimerPhase e)
         {
-            if (IgnoreNext["reset"] == true)
-            {
-                IgnoreNext["reset"] = false;
+            if (IgnoreNextReset)
                 return;
-            }
 
             AutoSplit.Send("reset");
             Settings.OnReset();
         }
 
-        private void State_OnSkipSplit(object sender, EventArgs e) =>
-            AutoSplit.Send("skip");
+        private void State_OnSkipSplit(object sender, EventArgs e) => AutoSplit.Send("skip");
 
-        private void State_OnUndoSplit(object sender, EventArgs e) =>
-            AutoSplit.Send("undo");
+        private void State_OnUndoSplit(object sender, EventArgs e) => AutoSplit.Send("undo");
     }
 }

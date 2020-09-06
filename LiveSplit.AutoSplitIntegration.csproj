@@ -33,7 +33,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\bin\Debug\Components\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -42,7 +42,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\bin\Release\Components\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -51,23 +51,36 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AutoSplitProcess.cs" />
-    <Compile Include="AutoSplitIntegrationComponent.cs" />
-    <Compile Include="AutoSplitIntegrationComponentSettings.cs">
+    <Compile Include="UI\Components\AutoSplitProcess.cs" />
+    <Compile Include="UI\Components\AutoSplitIntegrationComponent.cs" />
+    <Compile Include="UI\Components\AutoSplitIntegrationComponentSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AutoSplitIntegrationComponentSettings.Designer.cs">
+    <Compile Include="UI\Components\AutoSplitIntegrationComponentSettings.Designer.cs">
       <DependentUpon>AutoSplitIntegrationComponentSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="AutoSplitIntegrationFactory.cs" />
+    <Compile Include="UI\Components\AutoSplitIntegrationFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include=".gitignore" />
     <Content Include="update\update.LiveSplit.AutoSplitIntegration.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="LiveSplit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\Release\LiveSplit.exe</HintPath>
+    </Reference>
+    <Reference Include="LiveSplit.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\Release\LiveSplit.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="UpdateManager, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\Release\UpdateManager.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -82,9 +95,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AutoSplitIntegrationComponentSettings.resx">
+    <EmbeddedResource Include="UI\Components\AutoSplitIntegrationComponentSettings.resx">
       <DependentUpon>AutoSplitIntegrationComponentSettings.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
