@@ -14,13 +14,13 @@ namespace LiveSplit.UI.Components
 
         public ComponentCategory Category => ComponentCategory.Control;
 
-        public Version Version => Version.Parse("1.8.1");
+        public Version Version => Version.Parse("1.8.2");
 
         public string UpdateName => ComponentName;
 
-        public string UpdateURL => "https://raw.githubusercontent.com/KaDiWa4/LiveSplit.AutoSplitIntegration/master/update/";
+        public string UpdateURL => "https://raw.githubusercontent.com/KaDiWa4/LiveSplit.AutoSplitIntegration/master/update/Components/";
 
-        public string XMLURL => "https://raw.githubusercontent.com/KaDiWa4/LiveSplit.AutoSplitIntegration/master/update/update.LiveSplit.AutoSplitIntegration.xml";
+        public string XMLURL => "https://raw.githubusercontent.com/KaDiWa4/LiveSplit.AutoSplitIntegration/master/update/Components/update.LiveSplit.AutoSplitIntegration.xml";
 
         public IComponent Create(LiveSplitState state) => new AutoSplitIntegrationComponent(state);
     }

@@ -62,7 +62,7 @@
     <Compile Include="UI\Components\AutoSplitIntegrationFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include=".gitignore" />
-    <Content Include="update\update.LiveSplit.AutoSplitIntegration.xml" />
+    <Content Include="update\Components\update.LiveSplit.AutoSplitIntegration.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="LiveSplit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

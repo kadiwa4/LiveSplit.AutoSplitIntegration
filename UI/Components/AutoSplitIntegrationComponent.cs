@@ -10,6 +10,8 @@ namespace LiveSplit.UI.Components
 {
     public class AutoSplitIntegrationComponent : IComponent
     {
+        private bool hasStarted = false;
+
         internal AutoSplitProcess AutoSplit { get; set; }
 
         internal bool GameTimePausing { get; set; } = false;
@@ -20,36 +22,11 @@ namespace LiveSplit.UI.Components
 
         internal TimerModel Timer { get; private set; }
 
-        private bool ignoreNextStart = false;
-        internal bool IgnoreNextStart
-        {
-            get => GetAndResetBool(ref ignoreNextStart);
-            set => ignoreNextStart = value;
-        }
+        internal bool IgnoreNextStart { get; set; } = false;
 
-        private bool ignoreNextSplit = false;
-        internal bool IgnoreNextSplit
-        {
-            get => GetAndResetBool(ref ignoreNextSplit);
-            set => ignoreNextSplit = value;
-        }
+        internal bool IgnoreNextSplit { get; set; } = false;
 
-        private bool ignoreNextReset = false;
-        internal bool IgnoreNextReset
-        {
-            get => GetAndResetBool(ref ignoreNextReset);
-            set => ignoreNextReset = value;
-        }
-
-        private bool GetAndResetBool(ref bool value)
-        {
-            if (value)
-            {
-                value = false;
-                return true;
-            }
-            return false;
-        }
+        internal bool IgnoreNextReset { get; set; } = false;
 
         public string ComponentName => "AutoSplit Integration";
 
@@ -93,7 +70,11 @@ namespace LiveSplit.UI.Components
         {
             Settings.SetSettings(settings);
 
-            StartAutoSplit();
+            if (!hasStarted)
+            {
+                hasStarted = true;
+                StartAutoSplit();
+            }
         }
 
         public void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode) { }
@@ -124,7 +105,10 @@ namespace LiveSplit.UI.Components
         private void State_OnStart(object sender, EventArgs e)
         {
             if (IgnoreNextStart)
+            {
+                IgnoreNextStart = false;
                 return;
+            }
 
             AutoSplit.Send("start");
             if (GameTimePausing)
@@ -136,7 +120,10 @@ namespace LiveSplit.UI.Components
         private void State_OnSplit(object sender, EventArgs e)
         {
             if (IgnoreNextSplit)
+            {
+                IgnoreNextSplit = false;
                 return;
+            }
 
             AutoSplit.Send("split");
         }
@@ -144,7 +131,10 @@ namespace LiveSplit.UI.Components
         private void State_OnReset(object sender, TimerPhase e)
         {
             if (IgnoreNextReset)
+            {
+                IgnoreNextReset = false;
                 return;
+            }
 
             AutoSplit.Send("reset");
             Settings.OnReset();
