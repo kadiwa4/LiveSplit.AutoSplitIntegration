@@ -1,5 +1,7 @@
 ﻿# AutoSplit Integration
 
+This is now being maintained [here](https://github.com/Toufool/LiveSplit.AutoSplitIntegration).
+
 Directly connects [AutoSplit](https://github.com/KaDiWa4/Auto-Split) with [LiveSplit](https://github.com/LiveSplit/LiveSplit).
 
 ## Installation
